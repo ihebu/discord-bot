@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 func GetRandomQuote() (string, error) {
@@ -28,8 +30,29 @@ func GetRandomQuote() (string, error) {
 	return fmt.Sprintf("%s - %s", parsedData[0].Content, parsedData[0].Author), nil
 }
 
-func GetRandomJoke() (string, error) {
-	response, err := http.Get("https://v2.jokeapi.dev/joke/Any")
+func GetRandomJoke(category string) (string, error) {
+
+	validCategories := []string{"Any", "Misc", "Programming", "Dark", "Pun", "Spooky", "Christmas"}
+
+	var valid bool = false
+
+	for _, validCategory := range validCategories {
+		if strings.ToUpper(category) == strings.ToUpper(validCategory) {
+			valid = true
+			category = validCategory
+		}
+	}
+
+	if category == "" {
+		category = "Any"
+		valid = true
+	}
+
+	if !valid {
+		return "", errors.New("Invalid joke category")
+	}
+
+	response, err := http.Get("https://v2.jokeapi.dev/joke/" + category)
 
 	if err != nil {
 		return "", err

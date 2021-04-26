@@ -58,7 +58,17 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	if strings.HasPrefix(messageReceived, "! joke") {
 		var err error
-		messageToSend, err = GetRandomJoke()
+		var category string
+
+		words := strings.Fields(messageReceived)
+
+		if len(words) == 2 {
+			category = ""
+		} else {
+			category = words[2]
+		}
+
+		messageToSend, err = GetRandomJoke(category)
 
 		if err != nil {
 			messageToSend = "Oops, could not load a joke at the moment"
