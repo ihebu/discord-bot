@@ -56,6 +56,15 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	}
 
+	if strings.HasPrefix(messageReceived, "! joke") {
+		var err error
+		messageToSend, err = GetRandomJoke()
+
+		if err != nil {
+			messageToSend = "Oops, could not load a joke at the moment"
+		}
+	}
+
 	if messageToSend == "" {
 		return
 	}
@@ -66,9 +75,3 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		fmt.Println("Error sending message")
 	}
 }
-
-// features
-// meme : reddit
-// joke : https://sv443.net/jokeapi/v2/
-// quote : zenquotes.io
-// chatbot : can use facebook messenger api
