@@ -21,6 +21,7 @@ func main() {
 
 	if err := discord.Open(); err != nil {
 		fmt.Println("Error opening Discord connection")
+		return
 	}
 
 	defer discord.Close()
@@ -65,3 +66,9 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		fmt.Println("Error sending message")
 	}
 }
+
+// features
+// meme : reddit
+// joke : https://sv443.net/jokeapi/v2/
+// quote : zenquotes.io
+// chatbot : can use facebook messenger api
