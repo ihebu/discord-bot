@@ -37,7 +37,7 @@ func GetRandomJoke(category string) (string, error) {
 	var valid bool = false
 
 	for _, validCategory := range validCategories {
-		if strings.ToUpper(category) == strings.ToUpper(validCategory) {
+		if strings.EqualFold(category, validCategory) {
 			valid = true
 			category = validCategory
 		}
@@ -49,7 +49,7 @@ func GetRandomJoke(category string) (string, error) {
 	}
 
 	if !valid {
-		return "", errors.New("Invalid joke category")
+		return "", errors.New("invalid joke category")
 	}
 
 	response, err := http.Get("https://v2.jokeapi.dev/joke/" + category)
@@ -69,14 +69,16 @@ func GetRandomJoke(category string) (string, error) {
 
 	parsedData := &joke{}
 
-	json.Unmarshal(jsonData, &parsedData)
+	err = json.Unmarshal(jsonData, &parsedData)
 
-	var result string
+	if err != nil {
+		return "", nil
+	}
+
+	var result = parsedData.Joke
 
 	if parsedData.Type == "twopart" {
 		result = parsedData.Setup + "\n" + parsedData.Delivery
-	} else {
-		result = parsedData.Joke
 	}
 
 	return result, nil

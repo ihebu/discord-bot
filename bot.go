@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -31,6 +30,7 @@ func main() {
 
 	log.Printf("%s is now connected", user.Username)
 
+	// this prevents the function from terminating and keeps the server listening
 	<-make(chan struct{})
 }
 
@@ -41,13 +41,18 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	var messageReceived string = m.Content
 	var messageToSend string
+	var err error
+	// figure out the type of command
+	// generate the message
+	// send the message
 
+	// ping handler
 	if strings.HasPrefix(messageReceived, "! ping") {
 		messageToSend = "pong"
 	}
 
+	// quote handler
 	if strings.HasPrefix(messageReceived, "! quote") {
-		var err error
 		messageToSend, err = GetRandomQuote()
 
 		if err != nil {
@@ -55,8 +60,8 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	}
 
+	// joke handler
 	if strings.HasPrefix(messageReceived, "! joke") {
-		var err error
 		var category string
 
 		words := strings.Fields(messageReceived)
@@ -70,7 +75,7 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		messageToSend, err = GetRandomJoke(category)
 
 		if err != nil {
-			messageToSend = "Oops, could not load a joke at the moment"
+			messageToSend = "Oops, could not load a joke at the moment. Check if your command is valid"
 		}
 	}
 
@@ -78,9 +83,9 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	_, err := s.ChannelMessageSend(m.ChannelID, messageToSend)
+	_, err = s.ChannelMessageSend(m.ChannelID, messageToSend)
 
 	if err != nil {
-		fmt.Println("Error sending message")
+		log.Printf("Error sending message '%s'", messageToSend)
 	}
 }
