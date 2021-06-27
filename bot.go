@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -15,13 +16,11 @@ func main() {
 	discord, err := discordgo.New("Bot " + token)
 
 	if err != nil {
-		fmt.Println("Error creating Discord client", err)
-		return
+		log.Fatalf("Error creating Discord client: %s", err)
 	}
 
 	if err := discord.Open(); err != nil {
-		fmt.Println("Error opening Discord connection")
-		return
+		log.Fatalf("Error opening Discord connection: %s", err)
 	}
 
 	defer discord.Close()
@@ -30,7 +29,7 @@ func main() {
 
 	user, _ = discord.User("@me")
 
-	fmt.Printf("%s is now connected !", user.Username)
+	log.Printf("%s is now connected", user.Username)
 
 	<-make(chan struct{})
 }
